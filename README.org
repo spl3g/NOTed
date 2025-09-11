@@ -1,0 +1,56 @@
+* NOTed
+*Описание*:
+Заметки с возможностью поделиться с определенными людьми или сделать заметку публичной.
+
+*Используемые инструменты и технологии*:
+- Bun
+- Hono
+- sqlc
+
+*Таблицы*:
+#+begin_src sql
+  create extension if not exists "uuid-ossp";
+
+  create table note (
+    id uuid primary key default uuid_generate_v4(),
+    owner uuid references user on delete cascade,
+    contents text,
+    public boolean
+  );
+
+  create table user (
+    id uuid primary key default uuid_generate_v4(),
+    email varchar(255) not null,
+    password varchar(255) not null
+  );
+
+  create table note_shared_to_user (
+    note_id uuid references note on delete cascade,
+    user_id uuid references user on delete cascade,
+    primary key (note_id, user_id)
+  );
+#+end_src
+
+*Маршруты*:
+- /api/v1/user
+  - POST /login
+  - POST /register
+  - GET  /notes
+- /api/v1/note
+  - POST
+  - /{id}
+    - GET
+    - DELETE
+    - PATCH
+    - POST /share
+    - POST /revoke
+
+*Установка зависимостей*:
+#+begin_src sh
+  bun install
+#+end_src
+
+*Запуск*:
+#+begin_src sh
+  bun run dev
+#+end_src
