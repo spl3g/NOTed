@@ -63,7 +63,10 @@ const publicNotesRoute = new Elysia().get(
 );
 
 // Create authenticated route group - for authenticated operations only
-const authenticatedNotesRoutes = new Elysia({ prefix: "/notes" })
+const authenticatedNotesRoutes = new Elysia({
+	prefix: "/notes",
+	detail: { security: [{ bearerAuth: [] }] },
+})
 	.use(requireAuth)
 	.post(
 		"/",

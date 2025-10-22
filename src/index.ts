@@ -9,11 +9,11 @@ const app = new Elysia()
 	.use(routes)
 	.use(
 		logger({
-			level: "debug",
+			level: "info",
 		}),
 	)
 	.listen(config.port);
 
 console.log(
-	`🦊 NOTed API is running at http://${app.server?.hostname}:${app.server?.port}`,
+	`NOTed API is running at http://${app.server?.hostname}:${app.server?.port}`,
 );

@@ -12,7 +12,22 @@ export const routes = new Elysia()
 			credentials: true,
 		}),
 	)
-	.use(openapi())
+	.use(
+		openapi({
+			documentation: {
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: "http",
+							scheme: "bearer",
+							bearerFormat: "JWT",
+						},
+					},
+				},
+			},
+			provider: "swagger-ui",
+		}),
+	)
 	.group("/api/v1", (app) =>
 		app.use(authRoutes).use(notesRoutes).use(userRoutes),
 	)
