@@ -4,7 +4,7 @@
 
 *Используемые инструменты и технологии*:
 - Bun
-- Hono
+- ElysiaJS
 - sqlc
 
 *Таблицы*:
@@ -35,7 +35,7 @@
 - /api/v1/user
   - POST /login
   - POST /register
-  - GET  /notes
+  - GET  /{id}/notes
 - /api/v1/note
   - POST
   - /{id}

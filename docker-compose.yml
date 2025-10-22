@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: noted_db
+      POSTGRES_USER: noted_user
+      POSTGRES_PASSWORD: noted_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U noted_user -d noted_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: migrate/migrate
+    command: ["-source=file://migrations", "-database",  "postgres://noted_user:noted_password@postgres:5432/noted_db?sslmode=disable", "up"]
+    restart: on-failure
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://noted_user:noted_password@postgres:5432/noted_db
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      PORT: 3000
+      NODE_ENV: development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    command: bun run dev
+
+volumes:
+  postgres_data:
